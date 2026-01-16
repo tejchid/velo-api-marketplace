@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // URL is now managed in prisma.config.ts
+}
+
+model User {
+  id               String   @id @default(cuid())
+  clerkId          String   @unique
+  email            String   @unique
+  stripeCustomerId String?  @unique
+  plan             String   @default("FREE") 
+  apiKeys          ApiKey[]
+  usages           Usage[]
+  createdAt        DateTime @default(now())
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  key       String   @unique 
+  name      String    
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  usage     Usage[]
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Usage {
+  id        String   @id @default(cuid())
+  apiKeyId  String
+  apiKey    ApiKey   @relation(fields: [apiKeyId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  endpoint  String   
+  timestamp DateTime @default(now())
+}
