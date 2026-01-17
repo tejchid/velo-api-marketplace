@@ -1,5 +1,5 @@
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import Link from "next/link";
-import { SignInButton } from "@clerk/nextjs";
 
 export default function LandingPage() {
   return (
@@ -14,11 +14,23 @@ export default function LandingPage() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
-            <button className="bg-white text-black px-10 py-4 rounded-full font-bold text-lg hover:bg-zinc-200 transition-all transform hover:scale-105">
-              Enter Dashboard
-            </button>
-          </SignInButton>
+          {/* Shown if user is NOT logged in */}
+          <SignedOut>
+            <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
+              <button className="bg-white text-black px-10 py-4 rounded-full font-bold text-lg hover:bg-zinc-200 transition-all transform hover:scale-105">
+                Get Started
+              </button>
+            </SignInButton>
+          </SignedOut>
+
+          {/* Shown if user IS logged in (like you are right now) */}
+          <SignedIn>
+            <Link href="/dashboard">
+              <button className="bg-white text-black px-10 py-4 rounded-full font-bold text-lg hover:bg-zinc-200 transition-all transform hover:scale-105">
+                Go to Dashboard
+              </button>
+            </Link>
+          </SignedIn>
           
           <a 
             href="https://github.com/tejchid/velo-api-marketplace" 
@@ -29,11 +41,13 @@ export default function LandingPage() {
           </a>
         </div>
 
-        {/* This creates a visual "placeholder" for your dashboard UI */}
+        {/* Dashboard Preview Section */}
         <div className="mt-20 relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-zinc-800 to-zinc-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
           <div className="relative bg-zinc-950 border border-zinc-800 rounded-xl aspect-video flex items-center justify-center overflow-hidden">
-             <div className="text-zinc-700 font-medium">Dashboard Preview - Sign In to View Live UI</div>
+             <div className="text-zinc-700 font-medium italic">
+               Visualizing API Telemetry & Subscription Tiers
+             </div>
           </div>
         </div>
       </div>
