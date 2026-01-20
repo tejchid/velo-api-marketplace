@@ -1,5 +1,4 @@
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { syncUser, createApiKey, getUsageData, createCheckoutSession, revokeApiKey } from "@/lib/actions";
 import { seedDemoData } from "@/lib/seed";
 import { UserButton } from "@clerk/nextjs";
@@ -28,20 +27,25 @@ export default async function DashboardPage({
   // ---------- DEMO MODE ----------
   const isDemo = searchParams?.demo === "true";
 
-  // ---------- AUTH ----------
-  if (!isDemo) {
-    const { userId } = await auth();
-    if (!userId) redirect("/");
-  }
+  // ---------- AUTH (ONLY FOR NON-DEMO) ----------
+  let dbUser: any = null;
 
-  // ---------- USER ----------
-  const dbUser = isDemo
-    ? {
-        id: "demo-user",
-        plan: "PRO",
-        email: "demo@velo.dev",
-      }
-    : await syncUser();
+  if (isDemo) {
+    dbUser = {
+      id: "demo-user",
+      plan: "PRO",
+      email: "demo@velo.dev",
+    };
+  } else {
+    const { userId } = await auth();
+    if (!userId) {
+      // IMPORTANT:
+      // Do NOT redirect to sign-in.
+      // This avoids Clerk hijacking demo navigation.
+      return null;
+    }
+    dbUser = await syncUser();
+  }
 
   if (!dbUser) return null;
 
@@ -95,25 +99,27 @@ export default async function DashboardPage({
             <span className="text-2xl font-black tracking-tighter uppercase">VELO</span>
           </div>
 
-          <div className="flex items-center gap-4">
-            {!isDemo && !isPro && (
-              <form action={createCheckoutSession}>
-                <button className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-2xl hover:bg-blue-600 transition">
-                  <CreditCard className="w-4 h-4" />
-                  Upgrade to Pro
-                </button>
-              </form>
-            )}
+          {!isDemo && (
+            <div className="flex items-center gap-4">
+              {!isPro && (
+                <form action={createCheckoutSession}>
+                  <button className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-2xl hover:bg-blue-600 transition">
+                    <CreditCard className="w-4 h-4" />
+                    Upgrade to Pro
+                  </button>
+                </form>
+              )}
 
-            {!isDemo && isPro && (
-              <div className="flex items-center gap-2 px-6 py-2.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-2xl uppercase">
-                <ShieldCheck className="w-4 h-4" />
-                Enterprise Access
-              </div>
-            )}
+              {isPro && (
+                <div className="flex items-center gap-2 px-6 py-2.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-2xl uppercase">
+                  <ShieldCheck className="w-4 h-4" />
+                  Enterprise Access
+                </div>
+              )}
 
-            {!isDemo && <UserButton afterSignOutUrl="/" />}
-          </div>
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          )}
         </nav>
 
         {/* DEMO BANNER */}
@@ -189,10 +195,7 @@ export default async function DashboardPage({
               )}
 
               {apiKeys.map((key) => (
-                <div
-                  key={key.id}
-                  className="mb-4 p-4 bg-blue-50 rounded-xl"
-                >
+                <div key={key.id} className="mb-4 p-4 bg-blue-50 rounded-xl">
                   <div className="text-xs uppercase text-slate-400">
                     {key.name}
                   </div>
