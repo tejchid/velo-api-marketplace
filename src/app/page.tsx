@@ -31,9 +31,10 @@ export default function HomePage() {
           platform engineering teams, and abuse prevention at scale.
         </p>
 
+        {/* ✅ CORRECT LINK */}
         <Link
-          href="/api/demo"
-          className="block w-full text-center bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-blue-600"
+          href="/dashboard?demo=true"
+          className="block w-full text-center bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-blue-600 transition"
         >
           Enter Live Demo
         </Link>
