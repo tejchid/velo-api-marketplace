@@ -27,7 +27,17 @@ export default async function DashboardPage() {
   if (!dbUser) return null;
 
   // ---------- USAGE + QUOTAS ----------
-  const usageData = await getUsageData();
+  const usageData = isDemo
+  ? [
+      { date: "Mon", count: 120 },
+      { date: "Tue", count: 240 },
+      { date: "Wed", count: 180 },
+      { date: "Thu", count: 310 },
+      { date: "Fri", count: 260 },
+      { date: "Sat", count: 400 },
+      { date: "Sun", count: 350 },
+    ]
+  : await getUsageData();
   const totalCalls = usageData.reduce((a, b) => a + b.count, 0);
   const isPro = dbUser.plan === "PRO";
 
