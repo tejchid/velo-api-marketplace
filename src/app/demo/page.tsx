@@ -13,7 +13,6 @@ export default function DemoPage() {
           track usage, and enforce quotas in production systems.
         </p>
 
-        {/* WHAT THIS SHOWS */}
         <div className="mb-8">
           <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-3">
             What this demo shows
@@ -26,18 +25,16 @@ export default function DemoPage() {
           </ul>
         </div>
 
-        {/* WHY IT MATTERS */}
         <div className="mb-10">
           <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-3">
             Why it matters
           </h2>
           <p className="text-slate-700 text-sm">
-            These mechanisms are foundational for API-first SaaS products, platform
-            engineering teams, and abuse prevention at scale.
+            These mechanisms are foundational for API-first SaaS products,
+            platform engineering teams, and abuse prevention at scale.
           </p>
         </div>
 
-        {/* CTA */}
         <Link
           href="/dashboard?demo=true"
           className="block w-full text-center rounded-xl bg-slate-900 px-6 py-4 text-white font-bold hover:bg-blue-600 transition"
