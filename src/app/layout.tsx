@@ -1,5 +1,8 @@
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+
+export const metadata = {
+  title: "VELO — API Infrastructure Demo",
+};
 
 export default function RootLayout({
   children,
@@ -8,17 +11,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <ClerkProvider
-          appearance={{
-            elements: {
-              modalBackdrop: "hidden",
-            },
-          }}
-        >
-          {children}
-        </ClerkProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
