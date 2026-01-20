@@ -1,27 +1,27 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+
+const isPublicRoute = createRouteMatcher([
+  "/",              // landing
+  "/demo",          // demo explainer
+  "/dashboard",     // dashboard (handled below)
+  "/api/demo",      // demo api
+  "/docs(.*)",
+]);
 
 export default clerkMiddleware((auth, req) => {
-  const { pathname, searchParams } = req.nextUrl;
+  const url = new URL(req.url);
 
-  // ✅ FULLY PUBLIC ROUTES
-  if (
-    pathname === "/" ||
-    pathname === "/demo" ||
-    pathname.startsWith("/api/demo")
-  ) {
-    return NextResponse.next();
+  // ✅ allow demo dashboard access
+  if (url.pathname === "/dashboard" && url.searchParams.get("demo") === "true") {
+    return;
   }
 
-  // ✅ DEMO DASHBOARD (THIS IS THE IMPORTANT PART)
-  if (pathname === "/dashboard" && searchParams.get("demo") === "true") {
-    return NextResponse.next();
+  // 🔐 everything else requires auth
+  if (!isPublicRoute(req)) {
+    auth().redirectToSignIn();
   }
-
-  // 🔒 EVERYTHING ELSE REQUIRES AUTH
-  auth().protect();
 });
 
 export const config = {
-  matcher: ["/((?!_next|favicon.ico).*)"],
+  matcher: ["/((?!_next|.*\\..*).*)"],
 };
