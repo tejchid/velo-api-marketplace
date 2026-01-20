@@ -1,9 +1,5 @@
-import { ClerkProvider } from '@clerk/nextjs';
-import { dark } from '@clerk/themes';
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import { ClerkProvider } from "@clerk/nextjs";
 
 export default function RootLayout({
   children,
@@ -11,12 +7,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en" className="dark">
-        <body className={`${inter.className} bg-slate-950 text-slate-50 antialiased`}>
+    <html lang="en">
+      <body>
+        <ClerkProvider
+          appearance={{
+            elements: {
+              modalBackdrop: "hidden",
+            },
+          }}
+        >
           {children}
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
