@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   // ---------- DEMO MODE DETECTION ----------
-  const h = headers();
+  const h = await headers();
   const referer = h.get("referer") || "";
   const isDemo = referer.includes("demo=true");
 
@@ -24,9 +24,7 @@ export default async function DashboardPage() {
       }
     : await syncUser();
 
-  if (!dbUser) {
-    return null;
-  }
+  if (!dbUser) return null;
 
   // ---------- USAGE + QUOTAS ----------
   const usageData = await getUsageData();
@@ -52,14 +50,12 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 pb-20 relative overflow-hidden">
-      {/* Background */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-5%] left-[-5%] w-[800px] h-[800px] bg-blue-600/25 blur-[160px] rounded-full" />
         <div className="absolute bottom-[-5%] right-[-5%] w-[700px] h-[700px] bg-indigo-600/20 blur-[140px] rounded-full" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-8 py-10">
-        {/* NAV */}
         <nav className="flex justify-between items-center mb-12 px-8 py-5 bg-white/70 backdrop-blur-3xl border rounded-[2.5rem] shadow-xl">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
@@ -89,19 +85,19 @@ export default async function DashboardPage() {
           </div>
         </nav>
 
-        {/* DEMO BANNER */}
         {isDemo && (
           <div className="mb-10 px-6 py-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 text-sm font-semibold">
             Demo Mode — Explore API key management, usage tracking, and quotas without signing in.
           </div>
         )}
 
-        {/* METRICS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div className="bg-white/80 p-8 rounded-[3rem] shadow-sm">
             <Activity className="w-6 h-6 text-blue-600 mb-4" />
             <p className="text-xs uppercase text-slate-400 mb-1">Resource Usage</p>
-            <h3 className="text-3xl font-black">{totalCalls} / {quotaLimit}</h3>
+            <h3 className="text-3xl font-black">
+              {totalCalls} / {quotaLimit}
+            </h3>
             <div className="w-full h-2 bg-slate-200 rounded-full mt-4">
               <div className="h-full bg-blue-600 rounded-full" style={{ width: `${usagePercentage}%` }} />
             </div>
@@ -116,11 +112,12 @@ export default async function DashboardPage() {
           <div className="bg-white/80 p-8 rounded-[3rem] shadow-sm">
             <Sparkles className="w-6 h-6 text-amber-600 mb-4" />
             <p className="text-xs uppercase text-slate-400 mb-1">Access Level</p>
-            <h3 className="text-3xl font-black uppercase">{isDemo ? "Demo" : isPro ? "Enterprise" : "Sandbox"}</h3>
+            <h3 className="text-3xl font-black uppercase">
+              {isDemo ? "Demo" : isPro ? "Enterprise" : "Sandbox"}
+            </h3>
           </div>
         </div>
 
-        {/* CHART + SANDBOX */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-8 space-y-8">
             <div className="bg-white/80 p-10 rounded-[3.5rem] shadow-sm">
@@ -130,7 +127,6 @@ export default async function DashboardPage() {
             <Sandbox apiKeys={apiKeys} />
           </div>
 
-          {/* API KEYS */}
           <div className="lg:col-span-4">
             <div className="bg-white/80 p-10 rounded-[3.5rem] shadow-sm">
               <h2 className="text-xl font-black mb-6">API Keys</h2>
